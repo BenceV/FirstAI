@@ -8,6 +8,7 @@ public class Manager_SOLO : MonoBehaviour
     private int[] layers = { 3, 5, 5, 3 };
     private int curGenN = 0;
     private float timeLeft = 30f;
+    public int finish_point;
     private GameObject creature;
     // Use this for initialization
     void Start () {
@@ -36,7 +37,7 @@ public class Manager_SOLO : MonoBehaviour
         curGenN++;
         creature = (GameObject)Instantiate<GameObject>(prefab,transform.position,transform.rotation);
         NeuralNetwork neuralNetwork = new NeuralNetwork(layers);
-        creature.GetComponent<Creatures>().InitCreature(neuralNetwork,curGenN);
+        creature.GetComponent<Creatures>().InitCreature(neuralNetwork,curGenN, finish_point);
     }
     private void Kill()
     {

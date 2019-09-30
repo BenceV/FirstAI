@@ -107,8 +107,10 @@ public class NeuralNetwork : System.IComparable<NeuralNetwork>
         }
         return neurons[neurons.Length-1];
     }
-    public void Mutate()
+    public void Mutate(float mutation_rate)
     {
+        //Low mutation rate results in small mutation
+        //High mutation rate results in large mutation
         for (int i = 0; i < weights.Length; i++)
         {
             for (int j = 0;j<weights[i].Length;j++)
@@ -117,8 +119,9 @@ public class NeuralNetwork : System.IComparable<NeuralNetwork>
                 {
                     float weight = weights[i][j][k];
 
-                    float randomNumber = (float)Random.Range(0f,1000f);
 
+                    /*
+                    float randomNumber = (float)Random.Range(0f,10f);
                     if(randomNumber <= 2f)
                     {
                         weight *= -1f;
@@ -137,6 +140,23 @@ public class NeuralNetwork : System.IComparable<NeuralNetwork>
                         float factor = UnityEngine.Random.Range(0f,1f);
                         weight *= factor;
                     }
+                    */
+
+                    if (mutation_rate < 0.2f)
+                    {
+                        weight += (float)Random.Range(-0.02f, 0.02f);
+                    }
+                    else if (mutation_rate < 0.8f)
+                    {
+                        weight += (float)Random.Range(-0.1f, 0.1f);
+                    }
+                    else if (mutation_rate < 1f) {
+                        weight = UnityEngine.Random.Range(-0.5f, 0.5f);
+                    }
+
+
+
+
 
 
                     weights[i][j][k] = weight;

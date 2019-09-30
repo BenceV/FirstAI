@@ -10,6 +10,7 @@ public class Manager : MonoBehaviour {
     private int[] layers = {3,5,5,3};
     public GameObject[] creatures;
     private int curGenN;
+    public int finish_point;
     private float timeLeft = 30f;
 
 
@@ -29,7 +30,7 @@ public class Manager : MonoBehaviour {
         {
             NeuralNetwork neuralNetwork = new NeuralNetwork(layers);
             GameObject creature = (GameObject)Instantiate(prefab, transform.position, transform.rotation);
-            creature.GetComponent<Creatures>().InitCreature(neuralNetwork, i);
+            creature.GetComponent<Creatures>().InitCreature(neuralNetwork, i, finish_point);
             cnetworks[i] = new NeuralNetwork(neuralNetwork);
             creatures[i] = creature;
         }
@@ -43,7 +44,7 @@ public class Manager : MonoBehaviour {
         {
             NeuralNetwork neuralNetwork = new NeuralNetwork(previousNetworks[i]);
             GameObject creature = (GameObject)Instantiate(prefab, transform.position, transform.rotation);
-            creature.GetComponent<Creatures>().InitCreature(neuralNetwork,curGenN*10+i);
+            creature.GetComponent<Creatures>().InitCreature(neuralNetwork,curGenN*10+i, finish_point);
             cnetworks[i] = new NeuralNetwork(neuralNetwork);
             creatures[i] = creature;
             
@@ -94,7 +95,7 @@ public class Manager : MonoBehaviour {
         for (int i = 0; i < numberOfCreatures-6; i++)
         {
             NeuralNetwork n = new NeuralNetwork(rnetworks[i]);
-            n.Mutate();
+            n.Mutate(0.1f);
             anetworks[i] = new NeuralNetwork(n);
             
         }

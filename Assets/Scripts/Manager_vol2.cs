@@ -5,13 +5,15 @@ using UnityEngine.UI;
 
 public class Manager_vol2 : MonoBehaviour {
     public GameObject prefab;
-    private int numberOfCreatures = 50;
+    private int numberOfCreatures = 100;
     private NeuralNetwork[] cnetworks;
-    private int[] layers = { 3, 5, 5 ,3 };
+    private int[] layers = { 6, 7, 3 };
     public GameObject[] creatures;
     private GameObject bestCreature;
     private int curGenN = 0;
     private float timeLeft = 30f;
+    private float standard_time = 120f;
+    public int finish_point;
     public Text curGeneration;
 
     // Use this for initialization
@@ -45,7 +47,7 @@ public class Manager_vol2 : MonoBehaviour {
             Start();
         }
             { }
-        if (timeLeft > 29f && timeLeft < 29.5f)
+        if (timeLeft > standard_time-1f && timeLeft < standard_time-0.5f)
         {
             for (int i = 0; i < numberOfCreatures; i++)
             {
@@ -58,39 +60,63 @@ public class Manager_vol2 : MonoBehaviour {
 
     private void SetUpGeneration()
     {   
-        timeLeft = 30f;
+        timeLeft = standard_time;
         curGenN++;
         curGeneration.text = "Current Generation Number: "+ curGenN.ToString();
         for (int i = 0; i < numberOfCreatures; i++)
         {   
             NeuralNetwork neuralNetwork = new NeuralNetwork(layers);
             GameObject creature = (GameObject)Instantiate(prefab, transform.position, transform.rotation);
-            creature.GetComponent<Creatures>().InitCreature(neuralNetwork, i);
+            var scr = creature.GetComponent<Creatures>();
+            scr.InitCreature(neuralNetwork, i,finish_point);
             cnetworks[i] = new NeuralNetwork(neuralNetwork);
             creatures[i] = creature;
+            //creature.transform.Rotate(Vector3.forward);
         }
 
     }
     private void SetUpEvolution()
     {
-        timeLeft = 30f;
+        timeLeft = standard_time;
         curGenN++;
         curGeneration.text= "Current Generation Number: " + curGenN.ToString();
 
         NeuralNetwork neuralNetwork = new NeuralNetwork(bestCreature.GetComponent<Creatures>().GetNeuralNetwork());
         GameObject creature = (GameObject)Instantiate(prefab, transform.position, transform.rotation);
-        creature.GetComponent<Creatures>().InitCreature(neuralNetwork, 0);
+        creature.GetComponent<Creatures>().InitCreature(neuralNetwork, 0,finish_point);
         cnetworks[0] = new NeuralNetwork(neuralNetwork);
         creatures[0] = creature;
+        //creature.transform.Rotate(Vector3.forward);
 
-        for (int i = 1; i < numberOfCreatures; i++)
+        for (int i = 1; i < 60; i++)
         {
             NeuralNetwork neuralNetwork1 = new NeuralNetwork(bestCreature.GetComponent<Creatures>().GetNeuralNetwork());
-            neuralNetwork.Mutate();
+            neuralNetwork1.Mutate(0.1f);
             GameObject creature2 = (GameObject)Instantiate(prefab, transform.position, transform.rotation);
-            creature2.GetComponent<Creatures>().InitCreature(neuralNetwork1, i);
+            creature2.GetComponent<Creatures>().InitCreature(neuralNetwork1, i, finish_point);
             cnetworks[i] = new NeuralNetwork(neuralNetwork1);
             creatures[i] = creature2;
+            //creature2.transform.Rotate(Vector3.forward);
+        }
+        for (int i = 60; i < 80; i++)
+        {
+            NeuralNetwork neuralNetwork1 = new NeuralNetwork(bestCreature.GetComponent<Creatures>().GetNeuralNetwork());
+            neuralNetwork1.Mutate(0.7f);
+            GameObject creature2 = (GameObject)Instantiate(prefab, transform.position, transform.rotation);
+            creature2.GetComponent<Creatures>().InitCreature(neuralNetwork1, i, finish_point);
+            cnetworks[i] = new NeuralNetwork(neuralNetwork1);
+            creatures[i] = creature2;
+            //creature2.transform.Rotate(Vector3.forward);
+        }
+        for (int i = 80; i < numberOfCreatures; i++)
+        {
+            NeuralNetwork neuralNetwork1 = new NeuralNetwork(bestCreature.GetComponent<Creatures>().GetNeuralNetwork());
+            neuralNetwork1.Mutate(0.9f);
+            GameObject creature2 = (GameObject)Instantiate(prefab, transform.position, transform.rotation);
+            creature2.GetComponent<Creatures>().InitCreature(neuralNetwork1, i, finish_point);
+            cnetworks[i] = new NeuralNetwork(neuralNetwork1);
+            creatures[i] = creature2;
+            //creature2.transform.Rotate(Vector3.forward);
         }
 
     }
@@ -101,7 +127,9 @@ public class Manager_vol2 : MonoBehaviour {
             float[] utilities = new float[numberOfCreatures];
             for (int i = 0; i < numberOfCreatures; i++)
             {
-                utilities[i] = creatures[i].GetComponent<Creatures>().utility;
+                var ut = creatures[i].GetComponent<Creatures>().utility;
+                print(i + ": Utility " + ut);
+                utilities[i] =ut;
             }
             int bestIndex = FindIndexMax(utilities);
             bestCreature = creatures[bestIndex];
